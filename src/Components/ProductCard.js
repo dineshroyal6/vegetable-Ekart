@@ -1,40 +1,56 @@
+import { useEffect, useRef, useState } from "react";
 import { AiFillStar, AiOutlineStar, AiOutlineShopping } from "react-icons/ai";
 
-interface PropsType {
-  img: string;
-  name: string;
-  price: string;
-}
+const ProductCard = ({ img, name, price, onAddToCart }) => {
+  const [wasAdded, setWasAdded] = useState(false);
+  const feedbackTimer = useRef(null);
 
-const ProductCard: React.FC<PropsType> = ({ img, name, price }) => {
+  useEffect(
+    () => () => {
+      window.clearTimeout(feedbackTimer.current);
+    },
+    []
+  );
+
+  const handleAddToCart = () => {
+    onAddToCart({ img, name, price });
+    setWasAdded(true);
+    window.clearTimeout(feedbackTimer.current);
+    feedbackTimer.current = window.setTimeout(() => setWasAdded(false), 1600);
+  };
+
   return (
-    <div className="border border-gray-200 hover:border-gray-300 hover:scale-105 transition-transform rounded-lg relative">
-      {/* Product Image */}
-      <div className="w-full h-40 overflow-hidden rounded-t-lg">
-        <img src={img} alt={name} className="w-full h-full object-cover" />
+    <div className="relative rounded-lg border border-gray-200 transition-transform hover:scale-105 hover:border-gray-300">
+      <div className="h-40 w-full overflow-hidden rounded-t-lg">
+        <img src={img} alt={name} className="h-full w-full object-cover" />
       </div>
 
-      {/* Product Details */}
-      <div className="space-y-2 relative p-4">
-        {/* Star Ratings */}
-        <div className="text-yellow-400 flex gap-[2px] text-[20px]">
-          <AiFillStar />
-          <AiFillStar />
-          <AiFillStar />
-          <AiFillStar />
-          <AiOutlineStar />
+      <div className="relative space-y-2 p-4">
+        <div className="flex gap-[2px] text-[20px] text-yellow-400" aria-label="4 out of 5 stars">
+          <AiFillStar aria-hidden="true" />
+          <AiFillStar aria-hidden="true" />
+          <AiFillStar aria-hidden="true" />
+          <AiFillStar aria-hidden="true" />
+          <AiOutlineStar aria-hidden="true" />
         </div>
-
-        {/* Product Name */}
         <h3 className="font-medium">{name}</h3>
-
-        {/* Product Price */}
         <h3 className="text-2xl font-medium text-red-600">{price}</h3>
-
-        {/* Shopping Icon */}
-        <div className="absolute -top-4 right-2 bg-accent text-white text-[28px] w-[50px] h-[50px] rounded-full grid place-items-center cursor-pointer">
-          <AiOutlineShopping />
-        </div>
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          aria-label={wasAdded ? `${name} added to cart` : `Add ${name} to cart`}
+          title={wasAdded ? "Added to cart" : `Add ${name} to cart`}
+          className="absolute -top-4 right-2 grid h-[50px] w-[50px] place-items-center rounded-full bg-accent text-[28px] text-white hover:bg-accentDark focus:outline-none focus:ring-2 focus:ring-accentDark focus:ring-offset-2"
+        >
+          {wasAdded ? (
+            <span className="added-to-cart-feedback">
+              <span className="text-xl" aria-hidden="true">✓</span>
+              Added
+            </span>
+          ) : (
+            <AiOutlineShopping aria-hidden="true" />
+          )}
+        </button>
       </div>
     </div>
   );
