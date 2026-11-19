@@ -34,7 +34,7 @@ const data = [
   },
 ];
 
-const FeatureSectionFruits = () => {
+const FeatureSectionFruits = ({ onAddToCart }) => {
   return (
     <div className="container pt-16">
       {/* Header Section */}
@@ -77,6 +77,7 @@ const FeatureSectionFruits = () => {
             img={el.img}
             name={el.name}
             price={el.price}
+            onAddToCart={onAddToCart}
           />
         ))}
       </div>
